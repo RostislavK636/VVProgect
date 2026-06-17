@@ -1,17 +1,27 @@
 import { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { Alert, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import {registerUser} from './firebase'
 
 function RegisterScreen ({goBack}) {
   const [loading, setLoading] = useState(false)
   const handleRegister = async () => {
-    setLoading(true)
-    const result = await registerUser(email, password)
-    setLoading(false)
-    if (level === '' || name === '' || password === '' || phone === '' || fname === '' || email === ''){
-      alert("Ошибка: Заполни все поля!");
+    const normalizedEmail = email.trim();
+    const normalizedFields = [level, name, password, phone, fname, normalizedEmail];
+
+    if (normalizedFields.some((field) => field.trim() === '')){
+      Alert.alert('Ошибка', 'Заполните все поля');
+      return;
+    }
+
+    setLoading(true);
+    const result = await registerUser(normalizedEmail, password);
+    setLoading(false);
+
+    if (result.success) {
+      Alert.alert('Готово', 'Аккаунт создан');
+      goBack();
     } else {
-      alert("Ура: Можно дальше!");
+      Alert.alert('Ошибка регистрации', result.error);
     }
   }
   const [level, setLevel] = useState('');
@@ -80,7 +90,7 @@ function RegisterScreen ({goBack}) {
       />
 
       <TextInput
-        inputMode="tel"
+        keyboardType="phone-pad"
         placeholderTextColor="#64748B"
         placeholder="Телефон"
         value={phone}
@@ -104,7 +114,9 @@ function RegisterScreen ({goBack}) {
       />
 
       <TextInput
-        inputMode="email"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
         placeholderTextColor="#64748B"
         placeholder="Email"
         value={email}
@@ -194,7 +206,7 @@ function RegisterScreen ({goBack}) {
         }}
       >
         <Text style={{ color: '#0F172A', fontSize: 16, fontFamily: 'System', fontWeight: '700'}}>
-        {loading ? 'ПОДОЖДИТЕ...' : 'ЗАРЕГЕСТРИРОВАТЬСЯ'}
+        {loading ? 'ПОДОЖДИТЕ...' : 'ЗАРЕГИСТРИРОВАТЬСЯ'}
         </Text>
       </TouchableOpacity>
 
