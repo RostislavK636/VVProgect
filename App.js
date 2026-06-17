@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { Alert, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import RegisterScreen from "./Register"
 import Kabinet from "./Kabinet"
 import { loginUser } from './firebase';
@@ -14,17 +14,30 @@ export default function App(){
   const [showKabinet, setShowKabinet] = useState(false)
 
   const handleLogin = async () => {  
-    setLoading(true) 
-    const result = await loginUser(email, password)
-    if (email === '' || password === '') {
-      alert('Заполните все поля');
-    } else {
+    const normalizedEmail = email.trim();
+
+    if (normalizedEmail === '' || password === '') {
+      Alert.alert('Ошибка', 'Заполните все поля');
+      return;
+    }
+
+    setLoading(true);
+    const result = await loginUser(normalizedEmail, password);
+    setLoading(false);
+
+    if (result.success) {
+      setEmail(normalizedEmail);
       setShowKabinet(true);
+    } else {
+      Alert.alert('Ошибка входа', result.error);
     }
   };
 
   if (showKabinet) {
-    return <Kabinet userLogin={email}  goBackToLogin = {() => setShowKabinet(false)}/>;
+    return <Kabinet userLogin={email}  goBackToLogin = {() => {
+      setPassword('');
+      setShowKabinet(false);
+    }}/>;
   }
 
   if (showRegister) {
@@ -46,7 +59,9 @@ export default function App(){
         onChangeText={setEmail}
         placeholderTextColor="#64748B"
         placeholder="Email"
-        keyboardType="numeric"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
         style={{
           backgroundColor: '#1E293B',
           width: '100%',
@@ -90,6 +105,7 @@ export default function App(){
       />
 
       <TouchableOpacity
+        disabled={loading}
         onPress={handleLogin}
         style={{
           width: '100%',
@@ -99,10 +115,11 @@ export default function App(){
           justifyContent: 'center',
           alignItems: 'center',
           marginBottom: 12,
+          opacity: loading ? 0.6 : 1,
         }}
       >
         <Text style={{ color: '#0F172A', fontSize: 16, fontFamily: 'System', fontWeight: '700' }}>
-          Войти
+          {loading ? 'Входим...' : 'Войти'}
         </Text>
       </TouchableOpacity>
 

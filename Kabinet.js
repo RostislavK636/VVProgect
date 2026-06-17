@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Alert, View, Text, TouchableOpacity } from 'react-native';
 import History from "./History"
 
 function Kabinet({ userLogin, goBackToLogin }){
@@ -7,7 +7,7 @@ function Kabinet({ userLogin, goBackToLogin }){
   
   const handleHistory = () => {  
     if (userLogin === '') {
-      alert('Заполните все поля');
+      Alert.alert('Ошибка', 'Пользователь не авторизован');
     } else {
       setShowHistory(true);
     }

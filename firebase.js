@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app'; 
+import { getApp, getApps, initializeApp } from 'firebase/app'; 
 import { 
     getAuth, 
     createUserWithEmailAndPassword, 
@@ -20,17 +20,17 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 
-export const registerUser = async (email, fname, leavel, name, password, phone) => {
+export const registerUser = async (email, password) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email,password);
-        return {success: true, user: userCredential};
+        return {success: true, user: userCredential.user};
     } catch(error) {
         let errorMessage = 'Ошибка';
-        if (error.code === 'auth/email-already-in-use') errorMessage = 'Эта почта уже зарегестрированна';
+        if (error.code === 'auth/email-already-in-use') errorMessage = 'Эта почта уже зарегистрирована';
         if (error.code === 'auth/weak-password') errorMessage = 'Пароль должен быть больше 6 символов';
         if (error.code === 'auth/invalid-email') errorMessage = 'Неверный формат почты';
         return {success: false, error: errorMessage}
@@ -40,11 +40,12 @@ export const registerUser = async (email, fname, leavel, name, password, phone) 
 export const loginUser = async (email, password) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email,password);
-        return {success: true, user: userCredential};
+        return {success: true, user: userCredential.user};
     } catch(error) {
         let errorMessage = 'Ошибка входа';
         if (error.code === 'auth/user-not-found') errorMessage = 'Пользователь не найден';
         if (error.code === 'auth/wrong-password') errorMessage = 'Неверный пароль';
+        if (error.code === 'auth/invalid-credential') errorMessage = 'Неверный логин или пароль';
         if (error.code === 'auth/invalid-email') errorMessage = 'Неверный формат почты';
         return {success: false, error: errorMessage}
     }
