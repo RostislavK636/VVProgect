@@ -6,7 +6,7 @@ function RegisterScreen ({goBack}) {
   const [loading, setLoading] = useState(false)
   const handleRegister = async () => {
     const normalizedEmail = email.trim();
-    const normalizedFields = [level, name, password, phone, fname, normalizedEmail];
+    const normalizedFields = [normalizedEmail, password];
 
     if (normalizedFields.some((field) => field.trim() === '')){
       Alert.alert('Ошибка', 'Заполните все поля');
@@ -43,7 +43,7 @@ function RegisterScreen ({goBack}) {
         ЗАПИШИТЕСЬ В ЗАЛ
       </Text>
 
-      <TextInput
+      {/* <TextInput
         placeholderTextColor="#64748B"
         placeholder="Фамилия"
         value={fname}
@@ -111,7 +111,7 @@ function RegisterScreen ({goBack}) {
           shadowRadius: 4,
           elevation: 2,
         }}
-      />
+      /> */}
 
       <TextInput
         keyboardType="email-address"
@@ -163,7 +163,7 @@ function RegisterScreen ({goBack}) {
         }}
       />
 
-      <TextInput
+      {/* <TextInput
         placeholderTextColor="#64748B"
         placeholder="Уровень подготовки"
         value={level}
@@ -184,7 +184,7 @@ function RegisterScreen ({goBack}) {
           shadowRadius: 4,
           elevation: 2,
         }}
-      />
+      /> */}
 
       <TouchableOpacity
         disabled={loading}
