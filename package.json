@@ -19,5 +19,8 @@
     "react-native-paper": "4.9.2",
     "react-native-web": "^0.21.0"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "@firebase/app": "0.15.0"
+  }
 }

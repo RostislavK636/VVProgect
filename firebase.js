@@ -5,8 +5,6 @@ import {
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword 
   } from 'firebase/auth'; 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,34 +17,35 @@ const firebaseConfig = {
   appId: "1:147378452580:web:3ebc5c712b5dfc5dc00771"
 };
 
-// Initialize Firebase
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+// 1. Инициализируем приложение Firebase напрямую (без проверки getApps, так как это клиентский скрипт)
+const app = initializeApp(firebaseConfig);
 
+// 2. Инициализируем auth сразу после создания app
 export const auth = getAuth(app);
 
 export const registerUser = async (email, password) => {
     try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email,password);
-        return {success: true, user: userCredential.user};
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        return { success: true, user: userCredential.user };
     } catch(error) {
         let errorMessage = 'Ошибка';
         if (error.code === 'auth/email-already-in-use') errorMessage = 'Эта почта уже зарегистрирована';
         if (error.code === 'auth/weak-password') errorMessage = 'Пароль должен быть больше 6 символов';
         if (error.code === 'auth/invalid-email') errorMessage = 'Неверный формат почты';
-        return {success: false, error: errorMessage}
+        return { success: false, error: errorMessage };
     }
 };
 
 export const loginUser = async (email, password) => {
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email,password);
-        return {success: true, user: userCredential.user};
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        return { success: true, user: userCredential.user };
     } catch(error) {
         let errorMessage = 'Ошибка входа';
         if (error.code === 'auth/user-not-found') errorMessage = 'Пользователь не найден';
         if (error.code === 'auth/wrong-password') errorMessage = 'Неверный пароль';
         if (error.code === 'auth/invalid-credential') errorMessage = 'Неверный логин или пароль';
         if (error.code === 'auth/invalid-email') errorMessage = 'Неверный формат почты';
-        return {success: false, error: errorMessage}
+        return { success: false, error: errorMessage };
     }
 };
